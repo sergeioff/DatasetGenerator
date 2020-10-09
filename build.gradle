@@ -16,7 +16,6 @@ repositories {
 dependencies {
     compile group: 'org.scala-lang', name: 'scala-library', version: '2.13.3'
 
-    compile group: 'com.github.scopt', name: 'scopt_2.13', version: '3.7.1'
     compile group: 'com.github.javafaker', name: 'javafaker', version: '1.0.2'
     compile group: 'me.tongfei', name: 'progressbar', version: '0.9.0'
 }
