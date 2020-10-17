@@ -5,7 +5,6 @@ import java.io.{BufferedWriter, FileWriter}
 import com.github.javafaker.Faker
 import me.tongfei.progressbar.ProgressBar
 
-import scala.collection.mutable.ListBuffer
 import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.language.postfixOps
@@ -13,7 +12,9 @@ import scala.util.{Failure, Success, Try}
 
 object DatasetGenerator extends App {
 
-  val numberOfRecords = Try { args(0).toInt } match {
+  val numberOfRecords = Try {
+    args(0).toInt
+  } match {
     case Success(value) => value
     case Failure(e) => 0
   }
@@ -32,20 +33,14 @@ object DatasetGenerator extends App {
 
   implicit val ec: ExecutionContext = ExecutionContext.global
 
-  val futuresToWait = ListBuffer[Future[Unit]]()
+  val futuresToWait: Seq[Future[Unit]] = for (range <- ranges) yield Future {
+    (range._1 to range._2).foreach {
+      _ => {
+        printer.write(makeCSVLine(faker.name().fullName(), faker.address().fullAddress()))
+        printer.flush()
 
-  ranges.foreach {
-    range => {
-      futuresToWait.append(Future {
-        (range._1 to range._2).foreach {
-          _ => {
-            printer.write(makeCSVLine(faker.name().fullName(), faker.address().fullAddress()))
-            printer.flush()
-
-            progress.step()
-          }
-        }
-      })
+        progress.step()
+      }
     }
   }
 
